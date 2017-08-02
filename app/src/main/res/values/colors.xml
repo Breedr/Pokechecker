@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0874b9</color>
+    <color name="colorPrimaryDark">#043E62</color>
+    <color name="colorAccent">#66b5e8</color>
+
+    <color name="pc_background">#032E49</color>
+    <color name="pc_light_background">#043E62</color>
+
+    <color name="pc_checkbox_checked">#91C837</color>
+    <color name="pc_checkbox_unchecked">#C24A4B</color>
+    <color name="pc_checkbox_favourite">#FFFB0D</color>
+    <color name="secondary_text_color">#A5B5BF</color>
+
+</resources>
