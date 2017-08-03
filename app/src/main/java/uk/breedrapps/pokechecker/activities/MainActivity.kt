@@ -25,7 +25,7 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, BaseL
         main_ken_burns.setScaleType(ImageView.ScaleType.CENTER_CROP)
         main_ken_burns.initResourceIDs(
                 mutableListOf(
-                        R.drawable.flashfire_header2
+                        R.drawable.flashfire_header
                 )
         )
 

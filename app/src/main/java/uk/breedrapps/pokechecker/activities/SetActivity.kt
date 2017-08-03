@@ -144,7 +144,7 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
         set_title.text = set?.name
         set_main_title.text = set?.name
         set_main_subtitle.text = getString(R.string.released, set?.releaseDate)
-
+        
         set_back_button.setOnClickListener { _ -> finish(); }
 
         loadSetImage()
