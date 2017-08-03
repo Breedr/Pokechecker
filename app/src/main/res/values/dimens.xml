@@ -3,5 +3,5 @@
     <dimen name="image_width">100dp</dimen>
     <dimen name="image_final_width">32dp</dimen>
     <dimen name="spacing_normal">16dp</dimen>
-    <dimen name="set_appbar_height">300dp</dimen>
+    <dimen name="set_appbar_height">250dp</dimen>
 </resources>

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -89,7 +90,12 @@ public class SetImageBehavior extends CoordinatorLayout.Behavior<ImageView> {
                     * (1f - expandedPercentageFactor)) + (child.getHeight()/2);
 
             child.setX(mStartXPosition - distanceXToSubtract);
-            child.setY(mStartYPosition - distanceYToSubtract);
+
+            float y = mStartYPosition - distanceYToSubtract;
+
+            // TODO fix this
+            child.setY(y <= 0f ? 32.0f : y);
+
 
             float heightToSubtract = ((mStartHeight - mCustomFinalHeight) * heightFactor);
 
@@ -97,12 +103,22 @@ public class SetImageBehavior extends CoordinatorLayout.Behavior<ImageView> {
             lp.width = (int) (mStartHeight - heightToSubtract);
             lp.height = (int) (mStartHeight - heightToSubtract);
             child.setLayoutParams(lp);
+
+            Log.d("behaviour", "y: " + y + " distanceYToSubtract: " + distanceYToSubtract + " heightFactor: " + heightFactor);
+            Log.d("behaviour", "expandedPercentageFactor: " + expandedPercentageFactor + " heightToSubtract: " + heightToSubtract);
+            Log.d("behaviour", "startY: " + mStartYPosition + " mFinalYPosition " + mFinalYPosition);
         } else {
             float distanceYToSubtract = ((mStartYPosition - mFinalYPosition)
                     * (1f - expandedPercentageFactor)) + (mStartHeight/2);
 
             child.setX(mStartXPosition - child.getWidth()/2);
-            child.setY(mStartYPosition - distanceYToSubtract);
+
+            float y = mStartYPosition - distanceYToSubtract;
+
+            // TODO fix this
+            child.setY(y <= 0f ? 32.0f : y);
+
+            child.setY(y);
 
             CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) child.getLayoutParams();
             lp.width = mStartHeight;

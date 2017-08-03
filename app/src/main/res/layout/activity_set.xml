@@ -64,6 +64,14 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:id="@+id/set_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="?attr/actionBarSize"
+                android:src="@drawable/abc_ic_ab_back_material"
+                android:padding="16dp"
+                app:layout_collapseMode="pin"/>
+
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
@@ -81,7 +89,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         app:layout_anchor="@id/set_linearlayout_title"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
         android:visibility="invisible"
         app:title="">
 
@@ -105,14 +113,14 @@
     <ImageView
         android:id="@+id/set_image"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/set_appbar_height"
+        android:layout_height="175dp"
         android:layout_gravity="center_horizontal"
         android:contentDescription="@string/empty"
         app:finalHeight="@dimen/image_final_width"
-        app:finalYPosition="2dp"
+        app:finalYPosition="0dp"
         app:layout_behavior="uk.breedrapps.pokechecker.views.SetImageBehavior"
-        app:startHeight="2dp"
-        app:startToolbarPosition="2dp"
+        app:startHeight="0dp"
+        app:startToolbarPosition="0dp"
         app:startXPosition="2dp" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -12,6 +12,7 @@ import retrofit2.http.Query;
 public interface PokemonTcgApi {
 
     String HOST = "https://api.pokemontcg.io/v1/";
+    int DEFAULT_PAGE_SIZE = 250;
 
     @GET("sets")
     Observable<SetResponse> getSets();
