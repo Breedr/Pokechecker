@@ -21,6 +21,7 @@ import uk.breedrapps.pokechecker.R
 import uk.breedrapps.pokechecker.adapters.BaseListAdapter
 import uk.breedrapps.pokechecker.adapters.CardListAdapter
 import uk.breedrapps.pokechecker.backend.PokemonTcgApi
+import uk.breedrapps.pokechecker.fragments.QuickCardOverviewFragment
 import uk.breedrapps.pokechecker.model.PokemonCard
 import uk.breedrapps.pokechecker.model.PokemonSet
 import uk.breedrapps.pokechecker.util.DisposingObserver
@@ -39,9 +40,9 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
         private val PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.75f
         private val PERCENTAGE_TO_HIDE_TITLE_DETAILS = 0.3f
         private val ALPHA_ANIMATIONS_DURATION : Long = 200
+        private var pokemonSet: PokemonSet? = null
         private var isTitleVisible = false
         private var isTitleContainerVisible = true
-        private var set : PokemonSet? = null
         private var setLogoDrawable: Drawable? = null
         private var setImageError: Boolean = false
     }
@@ -49,7 +50,7 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        set = intent.getParcelableExtra<PokemonSet>("set")
+        pokemonSet = intent.getParcelableExtra<PokemonSet>("pokemonSet")
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
@@ -61,7 +62,7 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
 
         configureViewsForSet()
 
-        api.getCardsForSet(set?.code, PokemonTcgApi.DEFAULT_PAGE_SIZE)
+        api.getCardsForSet(pokemonSet?.code, PokemonTcgApi.DEFAULT_PAGE_SIZE)
                 .webObservable()
                 .doOnError(Throwable::printStackTrace)
                 .doOnSubscribe { _ -> showLoadingDialog(true) }
@@ -83,6 +84,19 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
 
     override fun onItemClicked(item: PokemonCard?) {
         Log.d("SetActivity", item.toString())
+
+        val fragment = QuickCardOverviewFragment.newInstance(item)
+
+        val transaction = supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                        android.R.anim.fade_in, android.R.anim.fade_out,
+                        android.R.anim.fade_in, android.R.anim.fade_out
+                )
+
+
+        transaction.replace(android.R.id.content, fragment)
+                .addToBackStack(null).commit()
+
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
@@ -141,10 +155,10 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
     }
 
     private fun configureViewsForSet() {
-        set_title.text = set?.name
-        set_main_title.text = set?.name
-        set_main_subtitle.text = getString(R.string.released, set?.releaseDate)
-        
+        set_title.text = pokemonSet?.name
+        set_main_title.text = pokemonSet?.name
+        set_main_subtitle.text = getString(R.string.released, pokemonSet?.releaseDate)
+
         set_back_button.setOnClickListener { _ -> finish(); }
 
         loadSetImage()
@@ -173,7 +187,7 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
         set_appbar.addOnOffsetChangedListener(object : AppBarStateChangedListener() {
             override fun onAppBarLayoutStateChanged(appBarLayout: AppBarLayout?, newState: AppBarState?, previousState: AppBarState?) {
                 if (newState == AppBarState.COLLAPSED) {
-                    Glide.with(this@SetActivity).load(set?.iconUrl()).into(set_image)
+                    Glide.with(this@SetActivity).load(pokemonSet?.iconUrl()).into(set_image)
                 } else if (previousState == AppBarState.COLLAPSED) {
                     set_image.setImageDrawable(setLogoDrawable)
                 } else if (newState == AppBarState.EXPANDED && setImageError) {
@@ -184,7 +198,7 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
     }
 
     private fun loadSetImage() {
-        Glide.with(this).load(set?.logoUrl()).error(R.drawable.default_set_logo).into(object : GlideDrawableImageViewTarget(set_image) {
+        Glide.with(this).load(pokemonSet?.logoUrl()).error(R.drawable.default_set_logo).into(object : GlideDrawableImageViewTarget(set_image) {
             override fun onResourceReady(resource: GlideDrawable?, animation: GlideAnimation<in GlideDrawable>?) {
                 super.onResourceReady(resource, animation)
                 setLogoDrawable = resource

@@ -67,7 +67,7 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, BaseL
 
     override fun onItemClicked(set: PokemonSet?) {
         val intent = Intent(this, SetActivity::class.java)
-        intent.putExtra("set", set)
+        intent.putExtra("pokemonSet", set)
         startActivity(intent)
     }
 
