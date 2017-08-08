@@ -5,6 +5,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 
 import javax.inject.Inject;
 
@@ -31,6 +32,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayout());
         ((PokecheckerApp)getApplication()).getNetworkComponent().inject(this);
         setToolbar();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

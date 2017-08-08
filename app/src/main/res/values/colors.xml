@@ -11,5 +11,7 @@
     <color name="pc_checkbox_unchecked">#C24A4B</color>
     <color name="pc_checkbox_favourite">#FFFB0D</color>
     <color name="secondary_text_color">#A5B5BF</color>
+    <color name="owner_card_color">#e8e8e8</color>
+    <color name="owner_card_color_pressed">#c2e8e8e8</color>
 
 </resources>

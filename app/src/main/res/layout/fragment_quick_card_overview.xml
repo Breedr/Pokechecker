@@ -8,6 +8,12 @@
     android:clickable="true"
     android:focusable="true">
 
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/quick_overview_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"/>
+
     <ImageView
         android:id="@+id/quick_overview_card"
         android:layout_width="252dp"
@@ -15,5 +21,16 @@
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="I already own this card"
+        android:textColor="@color/owner_card_color"
+        android:background="@drawable/owned_background"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_margin="16dp"/>
 
 </FrameLayout>

@@ -1,13 +1,18 @@
 package uk.breedrapps.pokechecker.fragments
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import kotlinx.android.synthetic.main.fragment_quick_card_overview.*
 import uk.breedrapps.pokechecker.R
 import uk.breedrapps.pokechecker.model.PokemonCard
+import java.lang.Exception
 import java.util.*
 
 /**
@@ -35,7 +40,6 @@ class QuickCardOverviewFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         imageUrl = arguments.getString("image")
         id = arguments.getString("id")
         types = arguments.getStringArrayList("types")
@@ -44,24 +48,34 @@ class QuickCardOverviewFragment : BaseFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        quick_overview_background.background = generateBackground()
-        Glide.with(this).load(imageUrl).crossFade().into(quick_overview_card)
+        quick_overview_background.background = generateBackground(types?.get(0))
+        Glide.with(this).load(imageUrl).crossFade().into(object : GlideDrawableImageViewTarget(quick_overview_card) {
+            override fun onResourceReady(resource: GlideDrawable?, animation: GlideAnimation<in GlideDrawable>?) {
+                super.onResourceReady(resource, animation)
+                quick_overview_progress.visibility = View.GONE
+            }
+
+            override fun onLoadFailed(e: Exception?, errorDrawable: Drawable?) {
+                super.onLoadFailed(e, errorDrawable)
+                quick_overview_progress.visibility = View.GONE
+            }
+        })
     }
 
-    private fun  generateBackground(): GradientDrawable? {
+    private fun  generateBackground(type: String?): GradientDrawable? {
         val drawable = GradientDrawable(
                 GradientDrawable.Orientation.BOTTOM_TOP,
-                intArrayOf(typeToColor().toInt(), Color.argb(230, 0, 0, 0))
+                intArrayOf(typeToColor(type).toInt(), Color.argb(230, 0, 0, 0))
         )
         drawable.gradientType = GradientDrawable.LINEAR_GRADIENT
         drawable.gradientRadius = 0f
         return drawable
     }
 
-    private fun typeToColor(): Long {
-        return when(types?.get(0)) {
+    private fun typeToColor(type: String?): Long {
+        return when(type) {
             "Colorless" -> 0xFF958B87
-            "Dark" -> 0xFF1D1E1C
+            "Darkness", "Dark" -> 0xFF1D1E1C
             "Dragon" -> 0xFF81690D
             "Fairy" -> 0xFFE03A83
             "Fighting" -> 0xFFA63414
@@ -71,7 +85,7 @@ class QuickCardOverviewFragment : BaseFragment() {
             "Metal" -> 0xFF8A776E
             "Psychic" -> 0xFFA65E9A
             "Water" -> 0xFF6890F0
-            else -> 0xFFFFFFFF
+            else -> 0xFFDBDBDB
         }
     }
 

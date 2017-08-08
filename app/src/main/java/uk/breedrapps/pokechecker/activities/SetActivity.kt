@@ -1,12 +1,17 @@
 package uk.breedrapps.pokechecker.activities
 
+import android.app.SearchManager
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.MenuItemCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.OrientationHelper
+import android.support.v7.widget.SearchView
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.AnimationUtils
@@ -34,7 +39,10 @@ import java.util.concurrent.TimeUnit
  * Created by edgeorge on 02/08/2017.
  */
 class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<PokemonCard>,
-        AppBarLayout.OnOffsetChangedListener {
+        AppBarLayout.OnOffsetChangedListener, SearchView.OnQueryTextListener {
+
+    private lateinit var searchView: SearchView
+    private lateinit var searchMenuItem: MenuItem
 
     companion object {
         private val PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.75f
@@ -99,11 +107,25 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.set_menu, menu)
+        configureSearchView(menu)
+        return true
+    }
+
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
         val maxScroll = appBarLayout?.totalScrollRange
         val percentage = Math.abs(verticalOffset).div(maxScroll!!.toFloat())
         handleAlphaOnTitle(percentage)
         handleToolbarTitleVisibility(percentage)
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        TODO("not implemented")
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        TODO("not implemented")
     }
 
     private fun handleToolbarTitleVisibility(percentage: Float) {
@@ -214,7 +236,17 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
     }
 
     private fun showLoadingDialog(show: Boolean) {
-
+        set_progress.visibility = if (show) View.VISIBLE else View.GONE
     }
 
+    private fun configureSearchView(menu: Menu) {
+        // Retrieve the SearchView and plug it into SearchManager
+        searchMenuItem = menu.findItem(R.id.action_search)
+        searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
+        val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
+        searchView?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        val search = menu.findItem(R.id.action_search).actionView as SearchView
+        search.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        search.setOnQueryTextListener(this)
+    }
 }

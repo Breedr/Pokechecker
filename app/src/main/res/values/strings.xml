@@ -2,4 +2,5 @@
     <string name="app_name">Pokechecker</string>
     <string name="empty" />
     <string name="released">Released %s</string>
+    <string name="search">Search</string>
 </resources>
