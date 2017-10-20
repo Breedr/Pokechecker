@@ -27,10 +27,11 @@ class QuickCardOverviewFragment : BaseFragment() {
     companion object {
         fun newInstance(card: PokemonCard?) : QuickCardOverviewFragment {
 
-            val bundle = Bundle()
-            bundle.putString("image", card?.imageUrl)
-            bundle.putStringArrayList("types", card?.types as ArrayList<String>?)
-            bundle.putString("id", card?.id)
+            val bundle = Bundle().apply {
+                putString("image", card?.imageUrl)
+                putStringArrayList("types", card?.types as ArrayList<String>?)
+                putString("id", card?.id)
+            }
 
             val instance = QuickCardOverviewFragment()
             instance.arguments = bundle
@@ -63,13 +64,16 @@ class QuickCardOverviewFragment : BaseFragment() {
     }
 
     private fun  generateBackground(type: String?): GradientDrawable? {
-        val drawable = GradientDrawable(
+        return GradientDrawable(
                 GradientDrawable.Orientation.BOTTOM_TOP,
-                intArrayOf(typeToColor(type).toInt(), Color.argb(230, 0, 0, 0))
-        )
-        drawable.gradientType = GradientDrawable.LINEAR_GRADIENT
-        drawable.gradientRadius = 0f
-        return drawable
+                intArrayOf(
+                        typeToColor(type).toInt(),
+                        Color.argb(230, 0, 0, 0)
+                )
+        ).apply {
+            gradientType = GradientDrawable.LINEAR_GRADIENT
+            gradientRadius = 0f
+        }
     }
 
     private fun typeToColor(type: String?): Long {

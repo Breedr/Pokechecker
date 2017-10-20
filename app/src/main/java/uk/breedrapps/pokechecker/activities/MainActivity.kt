@@ -22,20 +22,24 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, BaseL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        main_ken_burns.setScaleType(ImageView.ScaleType.CENTER_CROP)
-        main_ken_burns.initResourceIDs(
-                mutableListOf(
-                        R.drawable.flashfire_header
-                )
-        )
+        main_ken_burns.apply {
+            setScaleType(ImageView.ScaleType.CENTER_CROP)
+            initResourceIDs(
+                    mutableListOf(
+                            R.drawable.flashfire_header
+                    )
+            )
+        }
 
         main_recycler_view.adapter = SetListAdapter(this)
 
         val decoration = DividerItemDecoration(this, OrientationHelper.VERTICAL)
         decoration.setDrawable(ContextCompat.getDrawable(this, R.drawable.main_divider))
 
-        main_recycler_view.addItemDecoration(decoration)
-        main_recycler_view.layoutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_anim_fall)
+        main_recycler_view.apply {
+            addItemDecoration(decoration)
+            layoutAnimation = AnimationUtils.loadLayoutAnimation(this@MainActivity, R.anim.layout_anim_fall)
+        }
 
         refresh_layout.setOnRefreshListener(this)
 
@@ -51,8 +55,7 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, BaseL
                 .map { it.sets }
                 .subscribe(object : DisposingObserver<List<PokemonSet>>() {
                     override fun onNext(list: List<PokemonSet>) {
-                        (main_recycler_view.adapter as SetListAdapter).setData(list)
-                        main_recycler_view.scheduleLayoutAnimation()
+                        (main_recycler_view.adapter as SetListAdapter).data = list
                     }
                 })
     }
@@ -66,9 +69,10 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, BaseL
     }
 
     override fun onItemClicked(set: PokemonSet?) {
-        val intent = Intent(this, SetActivity::class.java)
-        intent.putExtra("pokemonSet", set)
-        startActivity(intent)
+        Intent(this, SetActivity::class.java).apply {
+            putExtra("pokemonSet", set)
+            startActivity(this)
+        }
     }
 
     private fun showLoadingDialog(show: Boolean) {

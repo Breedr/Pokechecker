@@ -2,6 +2,8 @@ package uk.breedrapps.pokechecker.adapters;
 
 import android.text.TextUtils;
 
+import io.reactivex.functions.Predicate;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
 import uk.breedrapps.pokechecker.R;
 import uk.breedrapps.pokechecker.model.PokemonCard;
 
@@ -10,6 +12,7 @@ import uk.breedrapps.pokechecker.model.PokemonCard;
  */
 
 public class CardListAdapter extends BaseListAdapter<PokemonCard> {
+
     public CardListAdapter(OnItemClickedListener<PokemonCard> listener) {
         super(listener);
     }
@@ -19,6 +22,11 @@ public class CardListAdapter extends BaseListAdapter<PokemonCard> {
         holder.icon.setImageResource(R.drawable.unchecked);
         holder.title.setText(card.getName());
         holder.description.setText(getDescriptionText(card));
+    }
+
+    @Override
+    Predicate<PokemonCard> filterPredicate(String query) {
+        return pokemonCard -> !TextUtils.isEmpty(query) && FuzzySearch.partialRatio(query, pokemonCard.getName()) >= MIN_FUZZY_MATCH;
     }
 
     private String getDescriptionText(PokemonCard card) {

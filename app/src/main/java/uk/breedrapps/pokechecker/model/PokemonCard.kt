@@ -38,7 +38,7 @@ data class PokemonCard(
 
         }
 
-        var id :Int = 1000
+        var id = 1000
         try {
             id += Integer.parseInt(number?.replace("[^\\d.]".toRegex(), ""))
         } catch (e: NumberFormatException) {

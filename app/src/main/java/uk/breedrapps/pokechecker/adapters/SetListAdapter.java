@@ -2,6 +2,8 @@ package uk.breedrapps.pokechecker.adapters;
 
 import com.bumptech.glide.Glide;
 
+import io.reactivex.functions.Predicate;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
 import uk.breedrapps.pokechecker.model.PokemonSet;
 
 /**
@@ -18,5 +20,10 @@ public class SetListAdapter extends BaseListAdapter<PokemonSet> {
         holder.title.setText(set.getName());
         holder.description.setText(set.getSeries());
         Glide.with(holder.icon.getContext()).load(set.iconUrl()).into(holder.icon);
+    }
+
+    @Override
+    Predicate<PokemonSet> filterPredicate(String query) {
+        return set -> FuzzySearch.partialRatio(query, set.getName()) >= MIN_FUZZY_MATCH;
     }
 }

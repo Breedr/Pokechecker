@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.MenuItemCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.OrientationHelper
 import android.support.v7.widget.SearchView
@@ -21,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_set.*
 import uk.breedrapps.pokechecker.R
 import uk.breedrapps.pokechecker.adapters.BaseListAdapter
@@ -30,6 +30,7 @@ import uk.breedrapps.pokechecker.fragments.QuickCardOverviewFragment
 import uk.breedrapps.pokechecker.model.PokemonCard
 import uk.breedrapps.pokechecker.model.PokemonSet
 import uk.breedrapps.pokechecker.util.DisposingObserver
+import uk.breedrapps.pokechecker.util.RxSearch
 import uk.breedrapps.pokechecker.util.webObservable
 import uk.breedrapps.pokechecker.views.AppBarStateChangedListener
 import java.lang.Exception
@@ -39,9 +40,8 @@ import java.util.concurrent.TimeUnit
  * Created by edgeorge on 02/08/2017.
  */
 class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<PokemonCard>,
-        AppBarLayout.OnOffsetChangedListener, SearchView.OnQueryTextListener {
+        AppBarLayout.OnOffsetChangedListener {
 
-    private lateinit var searchView: SearchView
     private lateinit var searchMenuItem: MenuItem
 
     companion object {
@@ -80,8 +80,7 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
                 .map { it.sortedWith(compareBy(PokemonCard::adjustedId)) }
                 .subscribe(object : DisposingObserver<List<PokemonCard>>() {
                     override fun onNext(list: List<PokemonCard>) {
-                        (set_recycler_view.adapter as CardListAdapter).setData(list)
-                        set_recycler_view.scheduleLayoutAnimation()
+                        updateAdapter(list)
                     }
                 })
     }
@@ -120,12 +119,9 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
         handleToolbarTitleVisibility(percentage)
     }
 
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        TODO("not implemented")
-    }
 
-    override fun onQueryTextChange(newText: String?): Boolean {
-        TODO("not implemented")
+    private fun updateAdapter(list: List<PokemonCard>) {
+        (set_recycler_view.adapter as CardListAdapter).data = list
     }
 
     private fun handleToolbarTitleVisibility(percentage: Float) {
@@ -160,7 +156,7 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
     }
 
     private fun startAlphaAnimations(linearLayout: LinearLayout, duration: Long, visibility: Int) {
-        for (index in 0..linearLayout.childCount - 1) {
+        for (index in 0 until linearLayout.childCount) {
             startAlphaAnimation(linearLayout.getChildAt(index), duration, visibility)
         }
     }
@@ -190,18 +186,22 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
         val decoration = DividerItemDecoration(this, OrientationHelper.VERTICAL)
         decoration.setDrawable(ContextCompat.getDrawable(this, R.drawable.main_divider))
 
-        set_recycler_view.adapter = CardListAdapter(this)
-        set_recycler_view.addItemDecoration(decoration)
-        set_recycler_view.layoutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_anim_fall)
+        set_recycler_view.apply {
+            adapter = CardListAdapter(this@SetActivity)
+            addItemDecoration(decoration)
+            layoutAnimation = AnimationUtils.loadLayoutAnimation(this@SetActivity, R.anim.layout_anim_fall)
+        }
     }
 
     private fun setupKenBurnsView() {
-        set_ken_burns.setScaleType(ImageView.ScaleType.CENTER_CROP)
-        set_ken_burns.initResourceIDs(
-                mutableListOf(
-                        R.drawable.flashfire_header2
-                )
-        )
+        set_ken_burns.apply {
+            setScaleType(ImageView.ScaleType.CENTER_CROP)
+            initResourceIDs(
+                    mutableListOf(
+                            R.drawable.flashfire_header2
+                    )
+            )
+        }
     }
 
     private fun setupAppBarLayout() {
@@ -242,11 +242,16 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
     private fun configureSearchView(menu: Menu) {
         // Retrieve the SearchView and plug it into SearchManager
         searchMenuItem = menu.findItem(R.id.action_search)
-        searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
         val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
-        searchView?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-        val search = menu.findItem(R.id.action_search).actionView as SearchView
-        search.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-        search.setOnQueryTextListener(this)
+
+        (searchMenuItem.actionView as SearchView).apply {
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            RxSearch.fromSearchView(this)
+                    .debounce(400, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        query -> (set_recycler_view.adapter as CardListAdapter).filter(query)
+                    }
+        }
     }
 }
