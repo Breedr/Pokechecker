@@ -159,15 +159,18 @@ class SetActivity : BaseActivity(), BaseListAdapter.OnItemClickedListener<Pokemo
         }
     }
 
-    private fun startAlphaAnimation(v: View, duration: Long, visibility: Int) {
+    private fun startAlphaAnimation(v: View, animDuration: Long, visibility: Int) {
         val alphaAnimation = if (visibility == View.VISIBLE)
             AlphaAnimation(0f, 1f)
         else
             AlphaAnimation(1f, 0f)
 
-        alphaAnimation.duration = duration
-        alphaAnimation.fillAfter = true
-        v.startAnimation(alphaAnimation)
+        alphaAnimation.apply {
+            duration = animDuration
+            fillAfter = true
+            v.startAnimation(this)
+        }
+
     }
 
     private fun configureViewsForSet() {

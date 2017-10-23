@@ -1,6 +1,7 @@
 @file:JvmName("Utils")
 package uk.breedrapps.pokechecker.util
 
+import android.content.SharedPreferences
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.widget.ImageView
@@ -27,4 +28,10 @@ inline fun FragmentManager.withTransaction(func: FragmentTransaction.() -> Unit)
     val trans = beginTransaction()
     trans.func()
     trans.commit()
+}
+
+inline fun SharedPreferences.withPreferenceEditor(func: SharedPreferences.Editor.() -> Unit) {
+    val editor = edit()
+    editor.func()
+    editor.apply()
 }
