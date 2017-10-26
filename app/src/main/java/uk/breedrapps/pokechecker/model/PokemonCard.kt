@@ -1,13 +1,19 @@
 package uk.breedrapps.pokechecker.model
 
+import android.arch.persistence.room.*
+import io.reactivex.Flowable
+import java.io.Serializable
+
 /**
  * Awesome Pojo Generator
  */
+@Entity(tableName = "user_cards")
 data class PokemonCard(
+        @PrimaryKey
         var id: String? = null,
         var name: String? = null,
         var nationalPokedexNumber: Int? = null,
-        var types: List<String>? = null,
+        @Ignore var types: List<String>? = null,
         var subtype: String? = null,
         var supertype: String? = null,
         var hp: String? = null,
@@ -17,17 +23,17 @@ data class PokemonCard(
         var series: String? = null,
         var set: String? = null,
         var setCode: String? = null,
-        var retreatCost: List<String>? = null,
-        var text: List<String>? = null,
-        var attacks: List<Attacks>? = null,
-        var resistances: List<DamageModifier>? = null,
-        var weaknesses: List<DamageModifier>? = null,
-        var ancientTrait: Ability? = null,
+        @Ignore var retreatCost: List<String>? = null,
+        @Ignore var text: List<String>? = null,
+        @Ignore var attacks: List<Attacks>? = null,
+        @Ignore var resistances: List<DamageModifier>? = null,
+        @Ignore var weaknesses: List<DamageModifier>? = null,
+        @Ignore var ancientTrait: Ability? = null,
         var evolvesFrom: String? = null,
-        var ability: Ability? = null,
+        @Ignore var ability: Ability? = null,
         var imageUrl: String? = null,
         var imageUrlHiRes: String? = null
-) {
+) : Serializable {
 
     // TODO fix this
     fun adjustedId(): Int {
@@ -66,4 +72,20 @@ data class Attacks(
         var text: String? = null,
         var convertedEnergyCost: Int = 0
 )
+
+@Dao
+interface PokemonCardDao {
+
+    @Query("SELECT * FROM user_cards")
+    fun getAllCards(): Flowable<List<PokemonCard>>
+
+    @Query("SELECT * FROM user_cards WHERE id = :cardId LIMIT 1")
+    fun getCardWithId(id: String): Flowable<PokemonCard>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(card: PokemonCard)
+
+    @Delete
+    fun delete(card: PokemonCard)
+}
 
