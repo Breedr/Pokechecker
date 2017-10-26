@@ -3,13 +3,13 @@
 
     <item android:state_pressed="true">
         <shape>
-            <stroke android:color="@color/owner_card_color" android:width="2dp"/>
+            <solid android:color="@color/owner_card_color_pressed"/>
         </shape>
     </item>
 
     <item>
         <shape>
-            <solid android:color="@color/owner_card_color_pressed"/>
+            <stroke android:color="@color/owner_card_color" android:width="2dp"/>
         </shape>
     </item>
 

@@ -24,12 +24,13 @@
 
 
     <Button
+        android:id="@+id/already_own_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="I already own this card"
+        tools:text="I already own this card"
         android:textColor="@color/owner_card_color"
-        android:background="@drawable/owned_background"
+        android:background="@drawable/unowned_background"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_margin="16dp"/>
 
